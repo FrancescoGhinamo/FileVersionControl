@@ -8,6 +8,10 @@ public class FileVersioningManager implements Observer {
 
 	private ArrayList<ControlledFile> files;
 	
+	public FileVersioningManager() {
+		files = new ArrayList<ControlledFile>();
+	}
+	
 	public void add(ControlledFile f) {
 		f.addObserver(this);
 		new Thread(f).start();
