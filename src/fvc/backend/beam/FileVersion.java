@@ -12,21 +12,26 @@ public class FileVersion implements Serializable {
 	
 	private static final long serialVersionUID = -2642673476860464040L;
 	
+	private int verNum;
 	private byte[] content;
 	private File relativeFile;
 	private GregorianCalendar verTime;
 	private long versioningTime;
 	
+	private File versionFile;
+	
 	
 	
 
-	public FileVersion(File relativeFile, long versioningTime) {
+	public FileVersion(File relativeFile, long versioningTime, int verNum, File versionFile) {
 		super();
+		this.verNum = verNum;
 		this.relativeFile = relativeFile;
 		this.versioningTime = versioningTime;
 		this.verTime = new GregorianCalendar();
 		this.verTime.setTimeInMillis(versioningTime);
 		this.content = getFileActualContent();
+		this.versionFile = versionFile;
 	}
 
 	
@@ -78,6 +83,16 @@ public class FileVersion implements Serializable {
 
 	public long getVersioningTime() {
 		return versioningTime;
+	}
+
+
+	public File getVersionFile() {
+		return versionFile;
+	}
+
+
+	public int getVerNum() {
+		return verNum;
 	}
 	
 	

@@ -9,7 +9,7 @@ public class Testing {
 
 	public static void main(String[] args) {
 		ControlledFile f = new ControlledFile(new File("C:\\Users\\franc\\OneDrive\\Documents\\output.txt"), new File("C:\\Users\\franc\\OneDrive\\Desktop"));
-		FileVersioningManager fs = new FileVersioningManager();
+		FileVersioningManager fs = FileVersioningManager.getInstance();
 		fs.add(f);
 		try {
 			Thread.sleep(1000000000);

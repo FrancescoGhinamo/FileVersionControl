@@ -6,11 +6,12 @@ import java.util.Observable;
 
 import fvc.backend.service.FileServiceFactory;
 
+@SuppressWarnings("deprecation")
 public class ControlledFile extends Observable implements Runnable {
 
 	private File linkedFile;
 	private File versionDirectory;
-	
+	private int currentVersion;
 	private long lastModified;
 	
 	private ArrayList<FileVersion> versions;
@@ -18,11 +19,19 @@ public class ControlledFile extends Observable implements Runnable {
 	public ControlledFile(File linkedFile, File versionDirectory) {
 		this.linkedFile = linkedFile;
 		this.versionDirectory = versionDirectory;
+		this.currentVersion = 1;
 		versions = new ArrayList<FileVersion>();
 	}
 
 
+	public void removeVersions() {
+		for(FileVersion v: versions) {
+			v.getVersionFile().delete();
+		}
+		
+	}
 
+	
 	@Override
 	public void run() {
 		while(true) {
@@ -36,7 +45,7 @@ public class ControlledFile extends Observable implements Runnable {
 			
 			if(lastVersion != lastModified) {				
 				setChanged();
-				notifyObservers(new VersionChangedInfo(linkedFile, lastModified, versions.size()));
+				notifyObservers(new VersionChangedInfo(linkedFile, lastModified, currentVersion));
 				
 			}
 		}
@@ -44,9 +53,10 @@ public class ControlledFile extends Observable implements Runnable {
 	}
 
 	public void createVersion() {
-		FileVersion _v = new FileVersion(linkedFile, lastModified);
+		FileVersion _v = new FileVersion(linkedFile, lastModified, currentVersion, new File(versionDirectory.getAbsolutePath() + "\\" + currentVersion + ".ver"));
 		versions.add(_v);
-		FileServiceFactory.getFileService().saveData(_v, new File(versionDirectory.getAbsolutePath() + "\\" + versions.size() + ".ver"));
+		FileServiceFactory.getFileService().saveData(_v, _v.getVersionFile());
+		currentVersion++;
 	}
 
 
@@ -58,5 +68,9 @@ public class ControlledFile extends Observable implements Runnable {
 
 	public ArrayList<FileVersion> getVersions() {
 		return versions;
+	}
+	
+	public String toString() {
+		return linkedFile.getAbsolutePath();
 	}
 }
