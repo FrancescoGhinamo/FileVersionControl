@@ -42,9 +42,13 @@ public class FileVersioningManager implements Observer, Serializable {
 	}
 
 	public void stopVersioning(int i) {
-		ControlledFile f = files.get(i);
-		fileThreads.get(i).stop();
-		f.removeVersions();
+		try {
+			ControlledFile f = files.get(i);
+			fileThreads.get(i).stop();
+			f.removeVersions();
+		}
+		catch(IndexOutOfBoundsException e) {}
+		
 		
 	}
 	

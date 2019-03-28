@@ -19,6 +19,7 @@ import fvc.backend.beam.ControlledFile;
 import fvc.backend.beam.FileVersioningManager;
 import fvc.backend.beam.VersionChangedInfo;
 import fvc.frontend.gui.dialogs.AddVersioningDialog;
+import fvc.frontend.gui.dialogs.GoToVersionDialog;
 import fvc.frontend.gui.dialogs.StopVersioningDialog;
 
 @SuppressWarnings("deprecation")
@@ -32,6 +33,7 @@ public class VersionControlGUI extends JFrame implements ActionListener, Observe
 	
 	private JMenuItem itemAddFileVersioning;
 	private JMenuItem itemStopVersioning;
+	private JMenuItem itemGoToVersion;
 	
 	public VersionControlGUI() {
 		super("Version control manger");
@@ -63,8 +65,12 @@ public class VersionControlGUI extends JFrame implements ActionListener, Observe
 		itemStopVersioning = new JMenuItem("Stop versioning");
 		itemStopVersioning.addActionListener(this);
 		
+		itemGoToVersion = new JMenuItem("Go to version");
+		itemGoToVersion.addActionListener(this);
+		
 		mnuVersioning.add(itemAddFileVersioning);
 		mnuVersioning.add(itemStopVersioning);
+		mnuVersioning.add(itemGoToVersion);
 		
 		return mnuVersioning;
 	}
@@ -95,6 +101,9 @@ public class VersionControlGUI extends JFrame implements ActionListener, Observe
 		else if(e.getSource().equals(itemStopVersioning)) {
 			performStopVersioning();
 		}
+		else if(e.getSource().equals(itemGoToVersion)) {
+			performGoToVersion();
+		}
 
 	}
 	
@@ -110,6 +119,10 @@ public class VersionControlGUI extends JFrame implements ActionListener, Observe
 	
 	public void performStopVersioning() {
 		new StopVersioningDialog(this, true).setVisible(true);
+	}
+	
+	public void performGoToVersion() {
+		new GoToVersionDialog(this, true).setVisible(true);
 	}
 
 	public static void main(String[] args) {

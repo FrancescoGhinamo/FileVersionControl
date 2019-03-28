@@ -1,10 +1,13 @@
 package fvc.backend.beam;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
 
 import fvc.backend.service.FileServiceFactory;
+
 
 @SuppressWarnings("deprecation")
 public class ControlledFile extends Observable implements Runnable {
@@ -28,6 +31,40 @@ public class ControlledFile extends Observable implements Runnable {
 		for(FileVersion v: versions) {
 			v.getVersionFile().delete();
 		}
+		
+	}
+	
+	public void moveToVersion(int n) {
+		try {
+			FileVersion ver = versions.get(n - 1);
+			FileOutputStream fos = null;
+			try {
+				fos = new FileOutputStream(linkedFile);
+				fos.write(ver.getContent(), 0, ver.getContent().length);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			finally {
+				if(fos != null) {
+					try {
+						fos.flush();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					finally {
+						try {
+							fos.close();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+		catch (ArrayIndexOutOfBoundsException e) {}
 		
 	}
 
@@ -70,7 +107,25 @@ public class ControlledFile extends Observable implements Runnable {
 		return versions;
 	}
 	
+	
+	
+	public File getVersionDirectory() {
+		return versionDirectory;
+	}
+
+
+	public int getCurrentVersion() {
+		return currentVersion;
+	}
+
+
+	public long getLastModified() {
+		return lastModified;
+	}
+
+
 	public String toString() {
 		return linkedFile.getAbsolutePath();
 	}
+	
 }
