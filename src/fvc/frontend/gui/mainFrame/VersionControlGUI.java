@@ -45,12 +45,16 @@ public class VersionControlGUI extends JFrame implements ActionListener, Observe
 	private JMenuItem itemGoToVersion;
 	private JMenuItem itemSaveVersioningStatus;
 	
+	private boolean savedConfiguration;
+
+	
 	public VersionControlGUI() {
 		super("Version control manger");
 		FileVersioningManager.getInstance(this);
 		setExtendedState(MAXIMIZED_BOTH);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setMinimumSize(new Dimension(300, 170));
+		addWindowListener(new WinMan(this));
+		savedConfiguration = false;
 		initComponents();
 	}
 	
@@ -162,6 +166,7 @@ public class VersionControlGUI extends JFrame implements ActionListener, Observe
 			tblEvents.setRowCount(0);
 			FileVersioningManager.getInstance().loadVersioningConfifuration(c.getSelectedFile());
 			FileVersioningManager.getInstance().startVersioning();
+			savedConfiguration = true;
 		}
 	}
 	
@@ -173,6 +178,7 @@ public class VersionControlGUI extends JFrame implements ActionListener, Observe
 				_f = new File(_f.getAbsolutePath() + "." + CONFIG_EXT);
 			}
 			FileVersioningManager.getInstance().saveVersionigConfiguration(_f);
+			savedConfiguration = true;
 		}
 	}
 	
@@ -196,6 +202,12 @@ public class VersionControlGUI extends JFrame implements ActionListener, Observe
 	
 	public void performSaveVersioningStatus() {
 		new SaveVersioningsDialog(this, true).setVisible(true);
+	}
+	
+	
+
+	public boolean isSavedConfiguration() {
+		return savedConfiguration;
 	}
 
 	public static void main(String[] args) {

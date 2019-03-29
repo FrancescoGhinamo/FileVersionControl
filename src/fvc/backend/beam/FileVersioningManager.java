@@ -20,6 +20,8 @@ public class FileVersioningManager implements Observer, Serializable {
 
 	private ArrayList<ControlledFile> files;
 	private Observer otherObserver;
+	
+	private boolean changed;
 
 	//	private ArrayList<Thread> fileThreads;
 
@@ -44,6 +46,7 @@ public class FileVersioningManager implements Observer, Serializable {
 
 	private FileVersioningManager() {
 		files = new ArrayList<ControlledFile>();
+		changed = false;
 		//		fileThreads = new ArrayList<Thread>();
 	}
 
@@ -59,6 +62,7 @@ public class FileVersioningManager implements Observer, Serializable {
 		_t.start();
 
 		files.add(f);
+		changed = true;
 		//		fileThreads.add(_t);
 	}
 
@@ -72,6 +76,12 @@ public class FileVersioningManager implements Observer, Serializable {
 		catch(IndexOutOfBoundsException e) {}
 
 
+	}
+	
+	public void saveAllVersions() {
+		for(ControlledFile f: files) {
+			f.saveCurrentStatusAndVersions();
+		}
 	}
 
 	public void startVersioning() {
@@ -118,9 +128,11 @@ public class FileVersioningManager implements Observer, Serializable {
 			fw = new FileWriter(f);
 
 			for(ControlledFile cf: files) {
+				cf.saveCurrentStatusAndVersions();
 				fw.write(cf.getVersionFile().getAbsolutePath());
 				fw.write("\r\n");
 			}
+			changed = false;
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -169,6 +181,10 @@ public class FileVersioningManager implements Observer, Serializable {
 
 	public ArrayList<ControlledFile> getFiles() {
 		return files;
+	}
+
+	public boolean isChanged() {
+		return changed;
 	}
 
 
