@@ -18,12 +18,11 @@ public class FileVersion implements Serializable {
 	private GregorianCalendar verTime;
 	private long versioningTime;
 	
-	private File versionFile;
 	
 	
 	
 
-	public FileVersion(File relativeFile, long versioningTime, int verNum, File versionFile) {
+	public FileVersion(File relativeFile, long versioningTime, int verNum) {
 		super();
 		this.verNum = verNum;
 		this.relativeFile = relativeFile;
@@ -31,7 +30,6 @@ public class FileVersion implements Serializable {
 		this.verTime = new GregorianCalendar();
 		this.verTime.setTimeInMillis(versioningTime);
 		this.content = getFileActualContent();
-		this.versionFile = versionFile;
 	}
 
 	
@@ -83,11 +81,6 @@ public class FileVersion implements Serializable {
 
 	public long getVersioningTime() {
 		return versioningTime;
-	}
-
-
-	public File getVersionFile() {
-		return versionFile;
 	}
 
 

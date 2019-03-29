@@ -3,6 +3,7 @@ package fvc.backend.beam;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Observable;
 
@@ -10,28 +11,35 @@ import fvc.backend.service.FileServiceFactory;
 
 
 @SuppressWarnings("deprecation")
-public class ControlledFile extends Observable implements Runnable {
+public class ControlledFile extends Observable implements Runnable, Serializable {
+	
+	
+	private static final long serialVersionUID = -5272898050452014335L;
+
+	private static final String VER_EXT = ".ver";
 
 	private File linkedFile;
-	private File versionDirectory;
+	private File versionFile;
 	private int currentVersion;
 	private long lastModified;
+	
+	private boolean versioningStopped;
+	
+	private boolean versioningEnded;
 	
 	private ArrayList<FileVersion> versions;
 	
 	public ControlledFile(File linkedFile, File versionDirectory) {
 		this.linkedFile = linkedFile;
-		this.versionDirectory = versionDirectory;
+		this.versionFile = new File(versionDirectory.getAbsolutePath() + "\\" + linkedFile.getName() + VER_EXT);
 		this.currentVersion = 1;
 		versions = new ArrayList<FileVersion>();
+		this.versioningEnded = false;
 	}
 
 
 	public void removeVersions() {
-		for(FileVersion v: versions) {
-			v.getVersionFile().delete();
-		}
-		
+		versionFile.delete();
 	}
 	
 	public void moveToVersion(int n) {
@@ -71,7 +79,9 @@ public class ControlledFile extends Observable implements Runnable {
 	
 	@Override
 	public void run() {
-		while(true) {
+		versioningStopped = false;
+		
+		while(!versioningStopped) {
 			lastModified = linkedFile.lastModified();
 			long lastVersion = 0;
 			
@@ -90,12 +100,25 @@ public class ControlledFile extends Observable implements Runnable {
 	}
 
 	public void createVersion() {
-		FileVersion _v = new FileVersion(linkedFile, lastModified, currentVersion, new File(versionDirectory.getAbsolutePath() + "\\" + currentVersion + ".ver"));
+		FileVersion _v = new FileVersion(linkedFile, lastModified, currentVersion);
 		versions.add(_v);
-		FileServiceFactory.getFileService().saveData(_v, _v.getVersionFile());
+//		FileServiceFactory.getFileService().saveData(_v, _v.getVersionFile());
 		currentVersion++;
 	}
 
+	public void saveCurrentStatusAndVersions() {
+		if(!versioningStopped) {
+			this.stopVersioning();
+			FileServiceFactory.getFileService().saveData(this, versionFile);
+			new Thread(this).start();
+		}
+		
+	}
+	
+	
+	public void stopVersioning() {
+		versioningStopped = true;
+	}
 
 	public File getLinkedFile() {
 		return linkedFile;
@@ -109,8 +132,8 @@ public class ControlledFile extends Observable implements Runnable {
 	
 	
 	
-	public File getVersionDirectory() {
-		return versionDirectory;
+	public File getVersionFile() {
+		return versionFile;
 	}
 
 
@@ -121,6 +144,17 @@ public class ControlledFile extends Observable implements Runnable {
 
 	public long getLastModified() {
 		return lastModified;
+	}
+
+
+	
+	public boolean isVersioningEnded() {
+		return versioningEnded;
+	}
+
+
+	public void setVersioningEnded(boolean versioningEnded) {
+		this.versioningEnded = versioningEnded;
 	}
 
 
