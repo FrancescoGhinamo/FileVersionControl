@@ -55,7 +55,7 @@ public class GoToVersionDialog extends JDialog implements ActionListener, ItemLi
 
 		if(FileVersioningManager.getInstance().getFiles().size() > 0) {
 			for(FileVersion v: FileVersioningManager.getInstance().getFiles().get(0).getVersions()) {
-				cmbVersion.addItem(String.valueOf(v.getVerNum()));
+				cmbVersion.addItem(v.toString());
 			}
 		}
 
@@ -120,17 +120,27 @@ public class GoToVersionDialog extends JDialog implements ActionListener, ItemLi
 	public void itemStateChanged(ItemEvent e) {
 		if(e.getSource().equals(cmbFile)) {
 			if(cmbVersion != null && FileVersioningManager.getInstance().getFiles().size() > 0) {
-				cmbVersion.removeAll();
-				for(FileVersion v: FileVersioningManager.getInstance().getFiles().get(cmbFile.getSelectedIndex()).getVersions()) {
-					cmbVersion.addItem(String.valueOf(v.getVerNum()));
+				try {
+					cmbVersion.removeAllItems();
+					for(FileVersion v: FileVersioningManager.getInstance().getFiles().get(cmbFile.getSelectedIndex()).getVersions()) {
+						
+						cmbVersion.addItem(v.toString());
+					}
 				}
+				catch(IndexOutOfBoundsException ex) {}
+				
 			}
 		}
 		else if(e.getSource().equals(cmbVersion)) {
 			if(versionPreview != null && FileVersioningManager.getInstance().getFiles().size() > 0) {
-				String prev = new String(FileVersioningManager.getInstance().getFiles().get(cmbFile.getSelectedIndex()).getVersions().get(cmbVersion.getSelectedIndex()).getContent());
-				versionPreview.setText(prev);
+				
+				try {
+					String prev = new String(FileVersioningManager.getInstance().getFiles().get(cmbFile.getSelectedIndex()).getVersions().get(cmbVersion.getSelectedIndex()).getContent());
+					versionPreview.setText(prev);
+				}
+				catch(IndexOutOfBoundsException ex) {}
 			}
+			
 
 		}
 

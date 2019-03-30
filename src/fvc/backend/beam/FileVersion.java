@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 
 public class FileVersion implements Serializable {
@@ -88,6 +89,10 @@ public class FileVersion implements Serializable {
 		return verNum;
 	}
 	
+	public String toString() {
+		SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		return verNum + "  ---  " + fmt.format(verTime.getTime());
+	}
 	
 	
 	
