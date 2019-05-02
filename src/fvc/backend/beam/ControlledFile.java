@@ -109,7 +109,7 @@ public class ControlledFile extends Observable implements Runnable, Serializable
 	public void saveCurrentStatusAndVersions() {
 		if(!versioningStopped) {
 			this.stopVersioning();
-			FileServiceFactory.getFileService().saveData(this, versionFile);
+			FileServiceFactory.getFileService().saveData(this, versionFile.getAbsolutePath());
 			new Thread(this).start();
 		}
 		

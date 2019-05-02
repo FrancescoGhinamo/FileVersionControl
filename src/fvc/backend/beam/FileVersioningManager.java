@@ -97,7 +97,7 @@ public class FileVersioningManager implements Observer, Serializable {
 			files.clear();
 			String line = br.readLine();
 			while(line != null) {
-				ControlledFile cf = (ControlledFile) FileServiceFactory.getFileService().loadData(new File(line));
+				ControlledFile cf = (ControlledFile) FileServiceFactory.getFileService().loadData(new File(line).getAbsolutePath());
 				if(otherObserver != null) {
 					cf.addObserver(otherObserver);
 				}
@@ -165,11 +165,11 @@ public class FileVersioningManager implements Observer, Serializable {
 	}
 
 	public void serialize(File f) {
-		FileServiceFactory.getFileService().saveData(this, f);
+		FileServiceFactory.getFileService().saveData(this, f.getAbsolutePath());
 	}
 
 	public static FileVersioningManager getInstance(File f) {
-		me = (FileVersioningManager) FileServiceFactory.getFileService().loadData(f);
+		me = (FileVersioningManager) FileServiceFactory.getFileService().loadData(f.getAbsolutePath());
 		return me;
 	}
 

@@ -1,6 +1,5 @@
 package fvc.backend.service;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,7 +9,7 @@ import java.io.ObjectOutputStream;
 public class FileServiceImpl implements IFileService {
 
 	@Override
-	public void saveData(Object s, File dest) {
+	public void saveData(Object s, String dest) {
 		ObjectOutputStream oos = null;
 		try {
 			oos = new ObjectOutputStream(new FileOutputStream(dest));
@@ -42,7 +41,7 @@ public class FileServiceImpl implements IFileService {
 	}
 
 	@Override
-	public Object loadData(File source) {
+	public Object loadData(String source) {
 		Object res = null;
 		ObjectInputStream ois = null;
 		try {
